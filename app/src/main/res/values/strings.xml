@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Переводчик</string>
+    <string name="translate">Перевести</string>
+    <string name="from_lang">Перевести с</string>
+    <string name="to_lang">на</string>
+    <string name="result">Результат</string>
+    <string name="select_original_lang">Выберите язык оригинала</string>
+    <string name="select_result_lang">Выберите язык перевода</string>
+</resources>
