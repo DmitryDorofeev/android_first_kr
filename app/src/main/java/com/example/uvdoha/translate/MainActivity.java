@@ -1,5 +1,6 @@
 package com.example.uvdoha.translate;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,40 +11,46 @@ import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
-    String[] languages = {"Русский", "Английский"};
+    private static final int SELECT_FROM_CODE = 1;
+    private static final int SELECT_TO_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, languages);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        Spinner spinnerFrom = (Spinner) findViewById(R.id.spinnerFromLang);
-        spinnerFrom.setAdapter(adapter);
-        spinnerFrom.setPrompt(getString(R.string.select_original_lang));
-        spinnerFrom.setSelection(0);
-
-        Spinner spinnerTo = (Spinner) findViewById(R.id.spinnerToLang);
-        spinnerTo.setAdapter(adapter);
-        spinnerTo.setPrompt(getString(R.string.select_result_lang));
-        spinnerTo.setSelection(1);
-
         Button buttonTranslate = (Button) findViewById(R.id.buttonTranslate);
-        buttonTranslate.setOnClickListener(new View.OnClickListener() {
+
+        Button selectFromButton = (Button) findViewById(R.id.select_from_button);
+        Button selectToButton = (Button) findViewById(R.id.select_to_button);
+
+        selectFromButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView inputField = (TextView) findViewById(R.id.editTextInput);
-                String originalText = inputField.getText().toString();
-
-                String translatedText = translate(originalText);
-
-                TextView outputField =  (TextView) findViewById(R.id.editTextResult);
-                outputField.setText(translatedText);
+                Intent intent = new Intent(MainActivity.this, SelectLanguageActivity.class);
+                startActivityForResult(intent, SELECT_FROM_CODE);
             }
         });
+
+        selectToButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SelectLanguageActivity.class);
+                startActivityForResult(intent, SELECT_TO_CODE);
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SELECT_FROM_CODE) {
+            TextView fromLang = (TextView) findViewById(R.id.fromLangText);
+            fromLang.setText(data.getStringExtra("language"));
+        }
+        if (requestCode == SELECT_TO_CODE) {
+            TextView toLang = (TextView) findViewById(R.id.toLangText);
+            toLang.setText(data.getStringExtra("language"));
+        }
     }
 
     String translate(String originalText) {

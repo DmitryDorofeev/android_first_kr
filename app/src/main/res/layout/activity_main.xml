@@ -27,44 +27,65 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="@dimen/margin" />
 
-    <Spinner
-        android:id="@+id/spinnerFromLang"
+    <TextView
+        android:id="@+id/fromLangText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/textViewFromLang"
-        android:layout_toRightOf="@+id/textViewFromLang"
-        android:layout_toEndOf="@+id/textViewFromLang" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lang_not_selected"
+        android:layout_below="@+id/textViewFromLang"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="@dimen/margin" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_lang"
+        android:id="@+id/select_from_button"
+        android:layout_alignTop="@+id/textViewFromLang"
+        android:layout_alignParentRight="true"/>
 
     <TextView
         android:id="@+id/textViewToLang"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@+id/select_from_button"
         android:text="@string/to_lang"
-        android:layout_below="@+id/spinnerFromLang"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="@dimen/margin" />
+        android:layout_marginTop="@dimen/margin"/>
 
-    <Spinner
-        android:id="@+id/spinnerToLang"
+    <TextView
+        android:id="@+id/toLangText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/textViewToLang"
-        android:layout_alignLeft="@id/spinnerFromLang"
-        android:layout_alignStart="@id/spinnerFromLang" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/lang_not_selected"
+        android:layout_below="@+id/textViewToLang"
+        android:layout_toRightOf="@+id/textViewFromLang"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="@dimen/margin" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_lang"
+        android:id="@+id/select_to_button"
+        android:layout_below="@+id/toLangText"
+        android:layout_alignParentRight="true"/>
 
     <Button
         android:id="@+id/buttonTranslate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/translate"
-        android:layout_below="@+id/spinnerToLang"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/margin" />
+        android:layout_marginTop="@dimen/margin"
+        android:layout_below="@id/select_to_button" />
 
     <EditText
         android:id="@+id/editTextResult"
@@ -79,5 +100,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/margin"
         android:hint="@string/result"/>
+
+
 
 </RelativeLayout>
