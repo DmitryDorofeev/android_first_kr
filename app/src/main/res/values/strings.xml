@@ -10,6 +10,7 @@
     <string name="select_result_lang">Выберите язык перевода</string>
     <string name="select_lang">Выберите язык</string>
     <string name="title_activity_select_from">SelectFromActivity</string>
+    <string name="wait_for_translate">Идет перевод.\nПожалуйста, подождите</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

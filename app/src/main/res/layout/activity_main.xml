@@ -35,15 +35,17 @@
         android:text="@string/lang_not_selected"
         android:layout_below="@+id/textViewFromLang"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_marginTop="@dimen/margin" />
 
     <Button
+        android:id="@+id/select_from_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/select_lang"
-        android:id="@+id/select_from_button"
         android:layout_alignTop="@+id/textViewFromLang"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/textViewToLang"
@@ -64,16 +66,19 @@
         android:text="@string/lang_not_selected"
         android:layout_below="@+id/textViewToLang"
         android:layout_toRightOf="@+id/textViewFromLang"
+        android:layout_toEndOf="@+id/textViewFromLang"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_marginTop="@dimen/margin" />
 
     <Button
+        android:id="@+id/select_to_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/select_lang"
-        android:id="@+id/select_to_button"
         android:layout_below="@+id/toLangText"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
     <Button
         android:id="@+id/buttonTranslate"
@@ -100,7 +105,6 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/margin"
         android:hint="@string/result"/>
-
 
 
 </RelativeLayout>
