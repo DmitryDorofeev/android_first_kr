@@ -11,11 +11,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -108,9 +116,22 @@ public class MainActivity extends ActionBarActivity {
                 lang.append("en");
             }
 
+            JSONObject jsonResult = null;
             String result = null;
             if (params.length > 0) {
-                result = doRequestWithTextAndLang(params[0], lang.toString());
+                jsonResult = doRequestWithTextAndLang(params[0], lang.toString());
+            }
+            try {
+                if (jsonResult != null && jsonResult.getInt("code") == 200) {
+                    JSONArray textArray = jsonResult.getJSONArray("text");
+                    result = textArray.join(" ");
+                }
+                else {
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.translate_error), Toast.LENGTH_SHORT).show();
+                }
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
             }
             return result;
         }
@@ -129,12 +150,15 @@ public class MainActivity extends ActionBarActivity {
             Toast.makeText(MainActivity.this, getResources().getString(R.string.translation_cancelled), Toast.LENGTH_SHORT).show();
         }
 
-        String doRequestWithTextAndLang(String text, String lang) {
-            String result = null;
+        JSONObject doRequestWithTextAndLang(String text, String lang) {
+            String resultJson;
+            StringBuilder buf = new StringBuilder();
+            String line;
+            JSONObject json = null;
             try {
                 URL url = new URL(getResources().getString(R.string.apiURL) +
                         "?key=" + getResources().getString(R.string.apiKey) +
-                        "&text=" + text +
+                        "&text=" + URLEncoder.encode(text, "utf-8") +
                         "&lang=" + lang);
                 HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
                 int responseCode = httpsURLConnection.getResponseCode();
@@ -143,8 +167,13 @@ public class MainActivity extends ActionBarActivity {
                     case HttpsURLConnection.HTTP_OK:
                         try {
                             InputStream in = new BufferedInputStream(httpsURLConnection.getInputStream());
-                            result = in.toString();
-                            Log.d(LOG_TAG, "Result = " + result);
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                            while ((line = reader.readLine()) != null) {
+                                buf.append(line);
+                            }
+                            resultJson = buf.toString();
+                            json = new JSONObject(resultJson);
+                            Log.d(LOG_TAG, "Result = " + resultJson);
                         }
                         finally {
                             httpsURLConnection.disconnect();
@@ -157,7 +186,7 @@ public class MainActivity extends ActionBarActivity {
             catch (Exception e) {
                 e.printStackTrace();
             }
-            return result;
+            return json;
         }
     }
 }
