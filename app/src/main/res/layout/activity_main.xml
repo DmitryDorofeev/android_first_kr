@@ -13,8 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
-        android:ems="10"
-        android:hint="@string/translate" />
+        android:hint="@string/translate"
+        android:layout_below="@+id/select_to_button"
+        android:layout_marginTop="20dip"
+        android:lines="8" />
 
     <TextView
         android:id="@+id/textViewFromLang"
@@ -22,89 +24,48 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/from_lang"
-        android:layout_below="@+id/editTextInput"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="@dimen/margin" />
-
-    <TextView
-        android:id="@+id/fromLangText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/lang_not_selected"
-        android:layout_below="@+id/textViewFromLang"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="@dimen/margin" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
 
     <Button
         android:id="@+id/select_from_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/select_lang"
-        android:layout_alignTop="@+id/textViewFromLang"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_below="@+id/textViewFromLang"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
 
     <TextView
         android:id="@+id/textViewToLang"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_below="@+id/select_from_button"
         android:text="@string/to_lang"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="@dimen/margin"/>
-
-    <TextView
-        android:id="@+id/toLangText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/lang_not_selected"
-        android:layout_below="@+id/textViewToLang"
-        android:layout_toRightOf="@+id/textViewFromLang"
-        android:layout_toEndOf="@+id/textViewFromLang"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="@dimen/margin" />
+        android:layout_below="@+id/select_from_button" />
 
     <Button
         android:id="@+id/select_to_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/select_lang"
-        android:layout_below="@+id/toLangText"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_below="@+id/textViewToLang"
+        android:layout_alignParentEnd="true"
+         />
 
     <Button
         android:id="@+id/buttonTranslate"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/translate"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/margin"
-        android:layout_below="@id/select_to_button" />
+        android:layout_below="@+id/editTextInput"
+        android:layout_alignParentStart="true" />
 
-    <EditText
-        android:id="@+id/editTextResult"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:layout_below="@+id/buttonTranslate"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/margin"
-        android:hint="@string/result"/>
-
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/result"
+        android:name="com.example.uvdoha.translate.ResultFragment"
+        android:layout_below="@+id/buttonTranslate"/>
 
 </RelativeLayout>

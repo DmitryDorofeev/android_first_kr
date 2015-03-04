@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,18 +19,15 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends FragmentActivity {
     private static final String LOG_TAG = "LOG";
     private static final int SELECT_FROM_CODE = 1;
     private static final int SELECT_TO_CODE = 2;
@@ -40,8 +37,9 @@ public class MainActivity extends ActionBarActivity {
 
     EditText editTextInput;
     EditText editTextResult;
-    TextView fromLang;
-    TextView toLang;
+    Button selectFromButton;
+    Button selectToButton;
+    ResultFragment resultFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,14 +47,12 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         Button buttonTranslate = (Button) findViewById(R.id.buttonTranslate);
-        Button selectFromButton = (Button) findViewById(R.id.select_from_button);
-        Button selectToButton = (Button) findViewById(R.id.select_to_button);
+        selectFromButton = (Button) findViewById(R.id.select_from_button);
+        selectToButton = (Button) findViewById(R.id.select_to_button);
         editTextInput = (EditText) findViewById(R.id.editTextInput);
         editTextResult = (EditText) findViewById(R.id.editTextResult);
-        fromLang = (TextView) findViewById(R.id.fromLangText);
-        toLang = (TextView) findViewById(R.id.toLangText);
 
-
+        resultFragment = (ResultFragment) getSupportFragmentManager().findFragmentById(R.id.result);
         buttonTranslate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,10 +96,10 @@ public class MainActivity extends ActionBarActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case SELECT_FROM_CODE:
-                    fromLang.setText(data.getStringExtra("language"));
+                    selectFromButton.setText(data.getStringExtra("language"));
                     break;
                 case SELECT_TO_CODE:
-                    toLang.setText(data.getStringExtra("language"));
+                    selectToButton.setText(data.getStringExtra("language"));
                     break;
             }
         }
@@ -127,17 +123,17 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(String... params) {
             StringBuilder lang = new StringBuilder();
-            if (fromLang.getText().toString().equals(getResources().getString(R.string.ru))) {
+            if (selectFromButton.getText().toString().equals(getResources().getString(R.string.ru))) {
                 lang.append("ru");
             }
-            else if (fromLang.getText().toString().equals(getResources().getString(R.string.en))) {
+            else if (selectFromButton.getText().toString().equals(getResources().getString(R.string.en))) {
                 lang.append("en");
             }
             lang.append("-");
-            if (toLang.getText().toString().equals(getResources().getString(R.string.ru))) {
+            if (selectToButton.getText().toString().equals(getResources().getString(R.string.ru))) {
                 lang.append("ru");
             }
-            else if (toLang.getText().toString().equals(getResources().getString(R.string.en))) {
+            else if (selectToButton.getText().toString().equals(getResources().getString(R.string.en))) {
                 lang.append("en");
             }
 
@@ -164,7 +160,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(String aString) {
             super.onPostExecute(aString);
-            editTextResult.setText(aString);
+            setResult(aString);
             progressDialog.dismiss();
         }
 
@@ -214,6 +210,10 @@ public class MainActivity extends ActionBarActivity {
             }
             return json;
         }
+    }
+
+    public void setResult(String result) {
+        resultFragment.setResult(result);
     }
 }
 
