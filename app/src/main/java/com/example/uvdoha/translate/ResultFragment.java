@@ -3,6 +3,7 @@ package com.example.uvdoha.translate;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class ResultFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_result, container, false);
         TextView resultText = (TextView) view.findViewById(R.id.result_text);
         resultText.setText(getArguments().getBundle("result").getString("result"));
+        Log.d("skjdfghjlkds", "azaz" + getArguments().getBundle("result").getString("result"));
         return view;
     }
 }
