@@ -63,9 +63,9 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
             resultFragment = (ResultFragment) getSupportFragmentManager().findFragmentById(R.id.outputFrame);
             if (resultFragment == null) {
                 resultFragment = new ResultFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.outputFrame, resultFragment).commit();
             }
             resultFragment.setResult(result);
+            getSupportFragmentManager().beginTransaction().replace(R.id.outputFrame, resultFragment).commit();
         }
         else {
             startActivity(new Intent(MainActivity.this, ResultActivity.class).putExtra("result", result));
