@@ -19,12 +19,17 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 
 
 public class MainActivity extends FragmentActivity {
@@ -112,7 +117,7 @@ public class MainActivity extends FragmentActivity {
         task.execute(textToTranslate);
     }
 
-    private class AskForTranslate extends AsyncTask<String, Void, String> {
+    private class AskForTranslate extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute() {
@@ -148,7 +153,7 @@ public class MainActivity extends FragmentActivity {
                     result = textArray.join(" ");
                 }
                 else {
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.translate_error), Toast.LENGTH_SHORT).show();
+                    publishProgress(getResources().getString(R.string.translate_error));
                 }
             }
             catch (JSONException e) {
@@ -158,9 +163,19 @@ public class MainActivity extends FragmentActivity {
         }
 
         @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            if (values.length > 0) {
+                Toast.makeText(MainActivity.this, values[0], Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
         protected void onPostExecute(String aString) {
             super.onPostExecute(aString);
-            setResult(aString);
+            if (aString != null) {
+                setResult(aString);
+            }
             progressDialog.dismiss();
         }
 
@@ -168,7 +183,7 @@ public class MainActivity extends FragmentActivity {
         protected void onCancelled() {
             super.onCancelled();
             Log.d(LOG_TAG, getResources().getString(R.string.translation_cancelled));
-            // close Dialog
+            progressDialog.dismiss();
             Toast.makeText(MainActivity.this, getResources().getString(R.string.translation_cancelled), Toast.LENGTH_SHORT).show();
         }
 
@@ -202,7 +217,8 @@ public class MainActivity extends FragmentActivity {
                         }
                         break;
                     default:
-                        Toast.makeText(MainActivity.this, getResources().getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                        publishProgress(getResources().getString(R.string.connection_error));
+                        break;
                 }
             }
             catch (Exception e) {
