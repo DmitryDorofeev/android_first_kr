@@ -1,6 +1,7 @@
 package com.example.uvdoha.translate;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +14,16 @@ import android.widget.TextView;
 public class ResultFragment extends Fragment {
 
     public void setResult(String result) {
-        TextView resultText = (TextView) this.getView().findViewById(R.id.result_text);
-        resultText.setText(result);
+        Bundle bundle = new Bundle();
+        bundle.putString("result", result);
+        this.setArguments(bundle);
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_result, container, false);
-
+        TextView resultText = (TextView) view.findViewById(R.id.result_text);
+        resultText.setText(getArguments().getString("result"));
         return view;
     }
 }

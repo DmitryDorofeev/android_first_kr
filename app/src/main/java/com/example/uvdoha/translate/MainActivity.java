@@ -19,31 +19,21 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLHandshakeException;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements InputFragment.onTranslateSucceedListener {
     private static final String LOG_TAG = "LOG";
-    private static final int SELECT_FROM_CODE = 1;
-    private static final int SELECT_TO_CODE = 2;
     private ProgressDialog progressDialog;
-    private TextView outputField;
     private AskForTranslate task;
 
-    EditText editTextInput;
-    EditText editTextResult;
-    Button selectFromButton;
-    Button selectToButton;
+    private boolean withResult;
+
     ResultFragment resultFragment;
 
     @Override
@@ -51,35 +41,10 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button buttonTranslate = (Button) findViewById(R.id.buttonTranslate);
-        selectFromButton = (Button) findViewById(R.id.select_from_button);
-        selectToButton = (Button) findViewById(R.id.select_to_button);
-        editTextInput = (EditText) findViewById(R.id.editTextInput);
-        editTextResult = (EditText) findViewById(R.id.editTextResult);
-
-        resultFragment = (ResultFragment) getSupportFragmentManager().findFragmentById(R.id.result);
-        buttonTranslate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                askForTranslate(editTextInput.getText().toString());
-            }
-        });
-
-        selectFromButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SelectLanguageActivity.class);
-                startActivityForResult(intent, SELECT_FROM_CODE);
-            }
-        });
-
-        selectToButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SelectLanguageActivity.class);
-                startActivityForResult(intent, SELECT_TO_CODE);
-            }
-        });
+        withResult = (findViewById(R.id.outputFrame) != null);
+        if (withResult) {
+            showResult("");
+        }
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.wait_for_translate));
@@ -91,30 +56,28 @@ public class MainActivity extends FragmentActivity {
                 task.cancel(true);
             }
         });
-
-        outputField = (TextView) findViewById(R.id.editTextResult);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case SELECT_FROM_CODE:
-                    selectFromButton.setText(data.getStringExtra("language"));
-                    break;
-                case SELECT_TO_CODE:
-                    selectToButton.setText(data.getStringExtra("language"));
-                    break;
+    void showResult(String result) {
+        if (withResult) {
+            resultFragment = (ResultFragment) getSupportFragmentManager().findFragmentById(R.id.outputFrame);
+            if (resultFragment == null) {
+                resultFragment = new ResultFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.outputFrame, resultFragment).commit();
             }
+            resultFragment.setResult(result);
+        }
+        else {
+            startActivity(new Intent(MainActivity.this, ResultActivity.class).putExtra("result", result));
         }
     }
 
-    void askForTranslate(String textToTranslate) {
+    @Override
+    public void translate(String input, String fromLang, String toLang) {
         // TODO передавать языки оригинала и перевода. подумать, в каком виде хранить (енамы, константы, строки)
-        Log.d(LOG_TAG, "askForTranslate: '" + textToTranslate + "'");
+        Log.d(LOG_TAG, "askForTranslate: '" + input+ "', from: '" + fromLang + "' to: '" + toLang + "'");
         task = new AskForTranslate();
-        task.execute(textToTranslate);
+        task.execute(input, fromLang, toLang);
     }
 
     private class AskForTranslate extends AsyncTask<String, String, String> {
@@ -127,37 +90,35 @@ public class MainActivity extends FragmentActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            StringBuilder lang = new StringBuilder();
-            if (selectFromButton.getText().toString().equals(getResources().getString(R.string.ru))) {
-                lang.append("ru");
-            }
-            else if (selectFromButton.getText().toString().equals(getResources().getString(R.string.en))) {
-                lang.append("en");
-            }
-            lang.append("-");
-            if (selectToButton.getText().toString().equals(getResources().getString(R.string.ru))) {
-                lang.append("ru");
-            }
-            else if (selectToButton.getText().toString().equals(getResources().getString(R.string.en))) {
-                lang.append("en");
-            }
-
-            JSONObject jsonResult = null;
             String result = null;
-            if (params.length > 0) {
-                jsonResult = doRequestWithTextAndLang(params[0], lang.toString());
-            }
-            try {
-                if (jsonResult != null && jsonResult.getInt("code") == 200) {
-                    JSONArray textArray = jsonResult.getJSONArray("text");
-                    result = textArray.join(" ");
+            if (params.length == 3) {
+                StringBuilder lang = new StringBuilder();
+                if (params[1].equals(getResources().getString(R.string.ru))) {
+                    lang.append("ru");
+                } else if (params[1].equals(getResources().getString(R.string.en))) {
+                    lang.append("en");
                 }
-                else {
-                    publishProgress(getResources().getString(R.string.translate_error));
+                lang.append("-");
+                if (params[2].equals(getResources().getString(R.string.ru))) {
+                    lang.append("ru");
+                } else if (params[2].equals(getResources().getString(R.string.en))) {
+                    lang.append("en");
                 }
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
+
+                JSONObject jsonResult = null;
+                if (params.length > 0) {
+                    jsonResult = doRequestWithTextAndLang(params[0], lang.toString());
+                }
+                try {
+                    if (jsonResult != null && jsonResult.getInt("code") == 200) {
+                        JSONArray textArray = jsonResult.getJSONArray("text");
+                        result = textArray.join(" ");
+                    } else {
+                        publishProgress(getResources().getString(R.string.translate_error));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
             return result;
         }
@@ -229,7 +190,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void setResult(String result) {
-        resultFragment.setResult(result);
+        showResult(result);
     }
 }
 

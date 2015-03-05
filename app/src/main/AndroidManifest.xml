@@ -22,6 +22,10 @@
             android:name=".SelectLanguageActivity"
             android:label="@string/title_activity_select_from" >
         </activity>
+        <activity
+            android:name=".ResultActivity"
+            android:label="ResultActivity" >
+        </activity>
     </application>
 
 </manifest>
