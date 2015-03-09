@@ -58,7 +58,7 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
         });
     }
 
-    void showResult(String result) {
+    private void showResult(String result) {
         if (withResult) {
             resultFragment = (ResultFragment) getSupportFragmentManager().findFragmentById(R.id.outputFrame);
             if (resultFragment == null) {
@@ -151,14 +151,14 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
             Toast.makeText(MainActivity.this, getResources().getString(R.string.translation_cancelled), Toast.LENGTH_SHORT).show();
         }
 
-        JSONObject doRequestWithTextAndLang(String text, String lang) {
+        private JSONObject doRequestWithTextAndLang(String text, String lang) {
             String resultJson;
             StringBuilder buf = new StringBuilder();
             String line;
             JSONObject json = null;
             try {
-                URL url = new URL(getResources().getString(R.string.apiURL) +
-                        "?key=" + getResources().getString(R.string.apiKey) +
+                URL url = new URL("https://translate.yandex.net/api/v1.5/tr.json/translate" +
+                        "?key=trnsl.1.1.20150302T070606Z.ae16c8413b9d2123.03d6ce974ad95e39f0acb8ece6411819c3bab05d" +
                         "&text=" + URLEncoder.encode(text, "utf-8") +
                         "&lang=" + lang);
                 HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();

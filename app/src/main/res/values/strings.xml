@@ -12,16 +12,10 @@
     <string name="title_activity_select_from">SelectFromActivity</string>
     <string name="wait_for_translate">Идет перевод.\nПожалуйста, подождите</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_select_to">SelectToActivity</string>
     <string name="translation_cancelled">Процедура перевода отменена</string>
     <string name="connection_error">Произошла ошибка соединения</string>
     <string name="translate_error">Произошла ошибка перевода</string>
-
-    // API
-    <string name="apiKey">trnsl.1.1.20150302T070606Z.ae16c8413b9d2123.03d6ce974ad95e39f0acb8ece6411819c3bab05d</string>
-    <string name="apiURL">https://translate.yandex.net/api/v1.5/tr.json/translate</string>
 
     // Языки
     <string name="ru">Русский</string>
