@@ -7,10 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -72,12 +68,25 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
         }
     }
 
+    private boolean checkInput(String input) {
+        char[] chars = input.trim().toCharArray();
+        for (char c : chars) {
+            if (Character.isLetter(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void translate(String input, String fromLang, String toLang) {
-        // TODO передавать языки оригинала и перевода. подумать, в каком виде хранить (енамы, константы, строки)
-        Log.d(LOG_TAG, "askForTranslate: '" + input+ "', from: '" + fromLang + "' to: '" + toLang + "'");
-        task = new AskForTranslate();
-        task.execute(input, fromLang, toLang);
+        Log.d(LOG_TAG, "askForTranslate: '" + input + "', from: '" + fromLang + "' to: '" + toLang + "'");
+        if (fromLang.equals(toLang)) {
+            showResult(input);
+        } else if (checkInput(input)) {
+            task = new AskForTranslate();
+            task.execute(input, fromLang, toLang);
+        }
     }
 
     private class AskForTranslate extends AsyncTask<String, String, String> {
@@ -90,40 +99,40 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
 
         @Override
         protected String doInBackground(String... params) {
-            String result = null;
-            if (params.length == 3) {
-                StringBuilder lang = new StringBuilder();
-                if (params[1].equals(getResources().getString(R.string.ru))) {
-                    lang.append("ru");
-                } else if (params[1].equals(getResources().getString(R.string.en))) {
-                    lang.append("en");
-                }
-                lang.append("-");
-                if (params[2].equals(getResources().getString(R.string.ru))) {
-                    lang.append("ru");
-                } else if (params[2].equals(getResources().getString(R.string.en))) {
-                    lang.append("en");
-                }
-
-                JSONObject jsonResult = null;
-                if (params.length > 0) {
-                    jsonResult = doRequestWithTextAndLang(params[0], lang.toString());
-                }
-                try {
-                    if (jsonResult != null && jsonResult.getInt("code") == 200) {
-                        JSONArray textArray = jsonResult.getJSONArray("text");
-                        result = textArray.join(" ");
-                        result = result.substring(1); // Удаляем первую кавычку
-                        result = result.substring(0, result.length()-1); // Удаляем последнюю кавычку
-                        result = result.trim(); // Удаляем пробелы вначале и вконце
-                    } else {
-                        publishProgress(getResources().getString(R.string.translate_error));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            if (params.length != 3) {
+                return null;
             }
-            return result;
+
+            // TODO убрать захардкоженные языки
+            StringBuilder lang = new StringBuilder();
+            if (params[1].equals(getResources().getString(R.string.ru))) {
+                lang.append("ru");
+            } else if (params[1].equals(getResources().getString(R.string.en))) {
+                lang.append("en");
+            }
+            lang.append("-");
+            if (params[2].equals(getResources().getString(R.string.ru))) {
+                lang.append("ru");
+            } else if (params[2].equals(getResources().getString(R.string.en))) {
+                lang.append("en");
+            }
+
+            JSONObject jsonResult = doRequestWithTextAndLang(params[0], lang.toString());
+            try {
+                if (jsonResult != null && jsonResult.getInt("code") == 200) {
+                    JSONArray textArray = jsonResult.getJSONArray("text");
+                    String result = textArray.join(" ");
+                    result = result.substring(1); // Удаляем первую кавычку
+                    result = result.substring(0, result.length()-1); // Удаляем последнюю кавычку
+                    result = result.trim(); // Удаляем пробелы вначале и вконце
+                    return result;
+                } else {
+                    publishProgress(getResources().getString(R.string.translate_error));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
 
         @Override
@@ -138,7 +147,7 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
         protected void onPostExecute(String aString) {
             super.onPostExecute(aString);
             if (aString != null) {
-                setResult(aString);
+                showResult(aString);
             }
             progressDialog.dismiss();
         }
@@ -152,34 +161,31 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
         }
 
         private JSONObject doRequestWithTextAndLang(String text, String lang) {
-            String resultJson;
-            StringBuilder buf = new StringBuilder();
-            String line;
-            JSONObject json = null;
             try {
                 URL url = new URL("https://translate.yandex.net/api/v1.5/tr.json/translate" +
                         "?key=trnsl.1.1.20150302T070606Z.ae16c8413b9d2123.03d6ce974ad95e39f0acb8ece6411819c3bab05d" +
                         "&text=" + URLEncoder.encode(text, "utf-8") +
                         "&lang=" + lang);
                 HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
-                int responseCode = httpsURLConnection.getResponseCode();
+                final int responseCode = httpsURLConnection.getResponseCode();
 
                 switch (responseCode) {
                     case HttpsURLConnection.HTTP_OK:
                         try {
                             InputStream in = new BufferedInputStream(httpsURLConnection.getInputStream());
                             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                            StringBuilder buf = new StringBuilder();
+                            String line;
                             while ((line = reader.readLine()) != null) {
                                 buf.append(line);
                             }
-                            resultJson = buf.toString();
-                            json = new JSONObject(resultJson);
+                            String resultJson = buf.toString();
                             Log.d(LOG_TAG, "Result = " + resultJson);
+                            return new JSONObject(resultJson);
                         }
                         finally {
                             httpsURLConnection.disconnect();
                         }
-                        break;
                     default:
                         publishProgress(getResources().getString(R.string.connection_error));
                         break;
@@ -188,18 +194,12 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
             catch (Exception e) {
                 e.printStackTrace();
             }
-            return json;
+            return null;
         }
-    }
-
-    public void setResult(String result) {
-        showResult(result);
     }
 }
 
 
-// TODO при длинном тексте элементы едут за экран и становятся недоступными
 // TODO toast, если не выбран язык
 // TODO если поле ввода пустое, содержит только пробелы и переносы строк или языки оригинала и
 // перевода одинаковые, лишний запрос на сервер не делать
-// TODO передавать языки оригинала и перевода. подумать, в каком виде хранить (енамы, константы, строки)

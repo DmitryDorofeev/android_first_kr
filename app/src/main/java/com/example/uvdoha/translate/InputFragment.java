@@ -31,12 +31,7 @@ public class InputFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_input, null);
 
-        Button btnTranslate = (Button) view.findViewById(R.id.buttonTranslate);
-
-        final EditText inputEditText = (EditText) view.findViewById(R.id.editTextInput);
         selectFromButton = (Button) view.findViewById(R.id.select_from_button);
-        selectToButton = (Button) view.findViewById(R.id.select_to_button);
-
         selectFromButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,6 +40,7 @@ public class InputFragment extends Fragment {
             }
         });
 
+        selectToButton = (Button) view.findViewById(R.id.select_to_button);
         selectToButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,10 +49,12 @@ public class InputFragment extends Fragment {
             }
         });
 
-
+        final EditText inputEditText = (EditText) view.findViewById(R.id.editTextInput);
+        Button btnTranslate = (Button) view.findViewById(R.id.buttonTranslate);
         btnTranslate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO передавать в translate только правильные имена языков
                 listener.translate(inputEditText.getText().toString(),
                         selectFromButton.getText().toString(),
                         selectToButton.getText().toString());
