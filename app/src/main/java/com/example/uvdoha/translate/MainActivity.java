@@ -113,6 +113,9 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
                     if (jsonResult != null && jsonResult.getInt("code") == 200) {
                         JSONArray textArray = jsonResult.getJSONArray("text");
                         result = textArray.join(" ");
+                        result = result.substring(1); // Удаляем первую кавычку
+                        result = result.substring(0, result.length()-1); // Удаляем последнюю кавычку
+                        result = result.trim(); // Удаляем пробелы вначале и вконце
                     } else {
                         publishProgress(getResources().getString(R.string.translate_error));
                     }
