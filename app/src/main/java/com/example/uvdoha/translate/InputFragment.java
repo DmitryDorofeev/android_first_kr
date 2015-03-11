@@ -55,9 +55,21 @@ public class InputFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // TODO передавать в translate только правильные имена языков
-                listener.translate(inputEditText.getText().toString(),
-                        selectFromButton.getText().toString(),
-                        selectToButton.getText().toString());
+                // TODO вынести определение кодов языка в другое место
+                String lang1 = "";
+                String lang2 = "";
+                if (selectFromButton.getText().toString().equals(getResources().getString(R.string.ru))) {
+                    lang1 = "ru";
+                } else if (selectFromButton.getText().toString().equals(getResources().getString(R.string.en))) {
+                    lang1 = "en";
+                }
+                if (selectToButton.getText().toString().equals(getResources().getString(R.string.ru))) {
+                    lang2 = "ru";
+                } else if (selectToButton.getText().toString().equals(getResources().getString(R.string.en))) {
+                    lang2 = "en";
+                }
+
+                listener.translate(inputEditText.getText().toString(), lang1, lang2);
             }
         });
 
@@ -69,9 +81,11 @@ public class InputFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case SELECT_FROM_CODE:
+                    // TODO
                     selectFromButton.setText(data.getStringExtra("language"));
                     break;
                 case SELECT_TO_CODE:
+                    // TODO
                     selectToButton.setText(data.getStringExtra("language"));
                     break;
             }

@@ -11,11 +11,13 @@
     <string name="select_lang">Выберите язык</string>
     <string name="title_activity_select_from">SelectFromActivity</string>
     <string name="wait_for_translate">Идет перевод.\nПожалуйста, подождите</string>
+    <string name="wait_for_getting_langs">Загружается список языков.\nПожалуйста, подождите</string>
 
     <string name="action_settings">Settings</string>
     <string name="translation_cancelled">Процедура перевода отменена</string>
     <string name="connection_error">Произошла ошибка соединения</string>
     <string name="translate_error">Произошла ошибка перевода</string>
+    <string name="get_lang_error">Не удалось получить список языков</string>
 
     // Языки
     <string name="ru">Русский</string>
