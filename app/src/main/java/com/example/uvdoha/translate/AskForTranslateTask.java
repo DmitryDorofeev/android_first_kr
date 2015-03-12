@@ -86,6 +86,7 @@ public class AskForTranslateTask extends AsyncTask<String, String, String> {
     }
 
     private JSONObject doRequestWithTextAndLang(String text, String lang) {
+        // TODO проверять текст на всякую ерунду. Это ж дырка в безопасности
         try {
             URL url = new URL("https://translate.yandex.net/api/v1.5/tr.json/translate" +
                     "?key=trnsl.1.1.20150302T070606Z.ae16c8413b9d2123.03d6ce974ad95e39f0acb8ece6411819c3bab05d" +

@@ -17,9 +17,6 @@ import java.util.Map;
 
 
 public class MainActivity extends FragmentActivity implements InputFragment.onTranslateSucceedListener {
-    public Map<String, String> langsPairs; // Список направлений переводов (az - ru)
-    public Map<String, String> langCodeToName; // Расшифровки кодов языков (ru - Русский)
-
     private static final String LOG_TAG = "LOG";
     private AskForTranslateTask translateTask;
     private ProgressDialog translateProgressDialog;
@@ -88,29 +85,6 @@ public class MainActivity extends FragmentActivity implements InputFragment.onTr
         } else if (checkInput(input)) {
             translateTask = new AskForTranslateTask(translateProgressDialog, this);
             translateTask.execute(input, fromLang, toLang);
-        }
-    }
-
-    public void setLangsPairsAndNames(JSONObject result) throws JSONException {
-        Log.d(LOG_TAG, result.toString());
-
-        langsPairs = new HashMap<>();
-        JSONArray directionsArray = result.getJSONArray("dirs");
-        for (int i = 0; i < directionsArray.length(); i++) {
-            final String langPairStr = directionsArray.getString(i);
-            final String[] langPair = langPairStr.split("\\-");
-            final String fromLangCode = langPair[0];
-            final String toLangCode = langPair[1];
-            langsPairs.put(fromLangCode, toLangCode);
-        }
-
-        langCodeToName = new HashMap<>();
-        JSONObject codeToNamesJson = result.getJSONObject("langs");
-        Iterator<?> langCodes = codeToNamesJson.keys();
-        while( langCodes.hasNext() ) {
-            final String langCode = (String)langCodes.next();
-            final String langName = codeToNamesJson.getString(langCode);
-            langCodeToName.put(langCode, langName);
         }
     }
 }

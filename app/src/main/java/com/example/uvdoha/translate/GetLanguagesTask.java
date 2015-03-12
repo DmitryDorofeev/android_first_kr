@@ -17,6 +17,7 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+
 public class GetLanguagesTask extends AsyncTask<String, String, JSONObject> {
     private static final String LOG_TAG = "LOG";
     private ProgressDialog progressDialog;
@@ -49,7 +50,7 @@ public class GetLanguagesTask extends AsyncTask<String, String, JSONObject> {
     protected void onPostExecute(JSONObject result) {
         super.onPostExecute(result);
         try {
-            mainActivity.setLangsPairsAndNames(result);
+            LanguagesContainerSingleton.getInstance().setLangsPairsAndNames(result);
         } catch (JSONException e) {
             e.printStackTrace();
         }

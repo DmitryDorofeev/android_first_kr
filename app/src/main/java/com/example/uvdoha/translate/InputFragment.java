@@ -17,6 +17,8 @@ import android.widget.EditText;
 public class InputFragment extends Fragment {
     private static final int SELECT_FROM_CODE = 1;
     private static final int SELECT_TO_CODE = 2;
+    private String fromLangCode = "";
+    private String toLangCode = "";
 
     public interface onTranslateSucceedListener {
         public void translate(String input, String fromLang, String toLang);
@@ -36,6 +38,7 @@ public class InputFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), SelectLanguageActivity.class);
+                intent.putExtra("langsArray", LanguagesContainerSingleton.getInstance().getAllLangsNames());
                 startActivityForResult(intent, SELECT_FROM_CODE);
             }
         });
@@ -45,6 +48,7 @@ public class InputFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), SelectLanguageActivity.class);
+                intent.putExtra("langsArray", LanguagesContainerSingleton.getInstance().getAllLangsNames());
                 startActivityForResult(intent, SELECT_TO_CODE);
             }
         });
@@ -54,22 +58,7 @@ public class InputFragment extends Fragment {
         btnTranslate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO передавать в translate только правильные имена языков
-                // TODO вынести определение кодов языка в другое место
-                String lang1 = "";
-                String lang2 = "";
-                if (selectFromButton.getText().toString().equals(getResources().getString(R.string.ru))) {
-                    lang1 = "ru";
-                } else if (selectFromButton.getText().toString().equals(getResources().getString(R.string.en))) {
-                    lang1 = "en";
-                }
-                if (selectToButton.getText().toString().equals(getResources().getString(R.string.ru))) {
-                    lang2 = "ru";
-                } else if (selectToButton.getText().toString().equals(getResources().getString(R.string.en))) {
-                    lang2 = "en";
-                }
-
-                listener.translate(inputEditText.getText().toString(), lang1, lang2);
+                listener.translate(inputEditText.getText().toString(), fromLangCode, toLangCode);
             }
         });
 
@@ -79,14 +68,15 @@ public class InputFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
+            final String langName = data.getStringExtra("language");
             switch (requestCode) {
                 case SELECT_FROM_CODE:
-                    // TODO
-                    selectFromButton.setText(data.getStringExtra("language"));
+                    fromLangCode = LanguagesContainerSingleton.getInstance().getCodeByName(langName);
+                    selectFromButton.setText(langName);
                     break;
                 case SELECT_TO_CODE:
-                    // TODO
-                    selectToButton.setText(data.getStringExtra("language"));
+                    toLangCode = LanguagesContainerSingleton.getInstance().getCodeByName(langName);
+                    selectToButton.setText(langName);
                     break;
             }
         }
