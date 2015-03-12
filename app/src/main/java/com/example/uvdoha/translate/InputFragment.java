@@ -38,7 +38,11 @@ public class InputFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), SelectLanguageActivity.class);
-                intent.putExtra("langsArray", LanguagesContainerSingleton.getInstance().getAllLangsNames());
+                if (toLangCode.equals("")) {
+                    intent.putExtra("langsArray", LanguagesContainerSingleton.getInstance().getAllLangsNames());
+                } else {
+                    intent.putExtra("langsArray", LanguagesContainerSingleton.getInstance().getFromNamesByToCode(toLangCode));
+                }
                 startActivityForResult(intent, SELECT_FROM_CODE);
             }
         });
@@ -48,7 +52,11 @@ public class InputFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), SelectLanguageActivity.class);
-                intent.putExtra("langsArray", LanguagesContainerSingleton.getInstance().getAllLangsNames());
+                if (fromLangCode.equals("")) {
+                    intent.putExtra("langsArray", LanguagesContainerSingleton.getInstance().getAllLangsNames());
+                } else {
+                    intent.putExtra("langsArray", LanguagesContainerSingleton.getInstance().getToNamesByFromCode(fromLangCode));
+                }
                 startActivityForResult(intent, SELECT_TO_CODE);
             }
         });

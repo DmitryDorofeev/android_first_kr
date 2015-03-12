@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class LanguagesContainerSingleton {
     private static final String LOG_TAG = "LOG";
-    private Map<String, String> langsPairs; // Список направлений переводов (az - ru)
+    private Map<String, ArrayList<String>> langsPairs; // Список направлений переводов (az - (ru, en, ...))
     private Map<String, String> langNameToCode; // Расшифровки кодов языков (Русский - ru)
 
     private LanguagesContainerSingleton() {}
@@ -38,7 +38,10 @@ public class LanguagesContainerSingleton {
             final String[] langPair = langPairStr.split("\\-");
             final String fromLangCode = langPair[0];
             final String toLangCode = langPair[1];
-            langsPairs.put(fromLangCode, toLangCode);
+            if (langsPairs.get(fromLangCode) == null) {
+                langsPairs.put(fromLangCode, new ArrayList<String>());
+            }
+            langsPairs.get(fromLangCode).add(toLangCode);
         }
 
         langNameToCode = new HashMap<>();
@@ -58,5 +61,56 @@ public class LanguagesContainerSingleton {
 
     public String getCodeByName(String name) {
         return langNameToCode.get(name);
+    }
+
+    private String getNameByCode(String code) {
+        for (Map.Entry<String,String> nameCodeEntry : langNameToCode.entrySet()) {
+            final String codeEntry = nameCodeEntry.getValue();
+            if (codeEntry.equals(code)) {
+                return nameCodeEntry.getKey();
+            }
+        }
+
+        return "";
+    }
+
+    public String[] getFromNamesByToCode(String toCode) {
+        ArrayList<String> fromLangsCodeArrayList = new ArrayList<>();
+        for (Map.Entry<String, ArrayList<String>> langPair : langsPairs.entrySet()) {
+            final String fromLangCode = langPair.getKey();
+            final ArrayList<String> toLangCodeArray = langPair.getValue();
+            for (String toLangCode : toLangCodeArray) {
+                if (toLangCode.equals(toCode)) {
+                    fromLangsCodeArrayList.add(fromLangCode);
+                }
+            }
+        }
+
+        return getNamesArrayByCodeArrayList(fromLangsCodeArrayList);
+    }
+
+    public String[] getToNamesByFromCode(String fromCode) {
+        ArrayList<String> toLangsCodeArrayList = new ArrayList<>();
+        for (Map.Entry<String, ArrayList<String>> langPair : langsPairs.entrySet()) {
+            final String fromLangCode = langPair.getKey();
+            final ArrayList<String> toLangCodeArray = langPair.getValue();
+            for (String toLangCode : toLangCodeArray) {
+                if (fromLangCode.equals(fromCode)) {
+                    toLangsCodeArrayList.add(toLangCode);
+                }
+            }
+        }
+
+        return getNamesArrayByCodeArrayList(toLangsCodeArrayList);
+    }
+
+    private String[] getNamesArrayByCodeArrayList(ArrayList<String> codeArrayList) {
+        ArrayList<String> langsNamesArray = new ArrayList<>();
+        for (String langCode : codeArrayList) {
+            final String langName = getInstance().getNameByCode(langCode);
+            langsNamesArray.add(langName);
+        }
+
+        return langsNamesArray.toArray(new String[langsNamesArray.size()]);
     }
 }
